@@ -14,6 +14,8 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'no-unused-vars': 'warn', // Added rule to show unused variables as warnings
+    'no-unused-vars': 'warn', // Show unused variables as warnings
+    '@typescript-eslint/no-unused-vars': 'warn', // Show unused variables in TypeScript as warnings
+    '@typescript-eslint/no-unused-vars-experimental': 'warn', // Show unused variables in TypeScript as warnings (experimental)
   },
 }
