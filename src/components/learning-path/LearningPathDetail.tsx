@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { HiMagnifyingGlassPlus, HiMagnifyingGlassMinus } from "react-icons/hi2";
+import { AiOutlineFullscreen } from 'react-icons/ai';
+import { HiMagnifyingGlassMinus, HiMagnifyingGlassPlus } from "react-icons/hi2";
 import { useParams } from 'react-router-dom';
 
 // Sample data for learning paths
@@ -64,7 +65,7 @@ const LearningPathDetail: FC = () => {
         <div className="flex justify-end p-4 border-gray-200 rounded-lg overflow-hidden">
           <button className="px-4 py-2 border rounded mr-2">Edit</button>
           <button className="p-2 border rounded">
-            <HiMagnifyingGlassMinus className="h-6 w-6" />
+            <AiOutlineFullscreen className="h-6 w-6" />
           </button>
         </div>
         <div className="h-64 relative">
