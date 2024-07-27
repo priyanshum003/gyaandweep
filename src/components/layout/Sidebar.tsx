@@ -1,162 +1,157 @@
 import { FC, useState } from 'react';
 import { AiOutlineCalendar, AiOutlineHome } from 'react-icons/ai';
-import { BsBoxArrowRight, BsGear, BsQuestionCircle } from 'react-icons/bs';
-import { FiBook } from 'react-icons/fi';
-import { GiHamburgerMenu } from 'react-icons/gi';
-import { IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
-import { LuUsers } from 'react-icons/lu';
-import { Link } from 'react-router-dom';
+import { BsGear, BsQuestionCircle } from 'react-icons/bs';
+import { GoBook } from 'react-icons/go';
+import { IoIosArrowBack, IoIosArrowDown, IoIosArrowForward } from 'react-icons/io';
+import { LuLogOut, LuUsers } from 'react-icons/lu';
+import { Link, useLocation } from 'react-router-dom';
+import { showSuccessToast } from '../../utlis/toastUtils';
 
-const mainIconSize = 20; // 20px width and height
-const mIconSize = 16; // 16px width and height
+// Constants for icon sizes
+const MAIN_ICON_SIZE = 20;
+const SMALL_ICON_SIZE = 16;
 
 const Sidebar: FC = () => {
-  const [showTeachingResources, setShowTeachingResources] = useState(true);
-  const [showAssessmentTools, setShowAssessmentTools] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showTeachingResources, setShowTeachingResources] = useState(false);
+  const [showAssessmentTools, setShowAssessmentTools] = useState(false);
+  const location = useLocation();
+
+  // Toggle sidebar open/close state
+  const toggleSidebar = () => {
+    setIsOpen(!isOpen);
+  };
+
+  // Logout handler
+  const logout = () => {
+    showSuccessToast('Logout successful');
+    // Additional logout operations can be added here
+  };
+
+  // Render navigation links
+  const renderNavLinks = (title: string, links: { to: string; icon: JSX.Element; label: string }[]) => (
+    <div className={`flex my-2 flex-col ${isOpen ? '' : 'items-center'}`}>
+      <div className="px-2 py-2 text-gray-500 text-xs">{title}</div>
+      {links.map((link, index) => (
+        <Link
+          key={index}
+          to={link.to}
+          className={`flex items-center px-2 py-2.5 font-medium transition duration-150 hover:bg-active mb-1 ${
+            location.pathname === link.to ? 'bg-active' : ''
+          }`}
+        >
+          {link.icon}
+          {isOpen && <span className="ml-3 text-sm">{link.label}</span>}
+        </Link>
+      ))}
+    </div>
+  );
+
+  // Render collapsible section
+  const renderCollapsibleSection = (
+    title: string,
+    icon: JSX.Element,
+    isOpenState: boolean,
+    toggleOpenState: () => void,
+    subLinks: { to: string; label: string }[]
+  ) => (
+    <div className="mt-1">
+      <button
+        onClick={toggleOpenState}
+        className="flex w-full items-center justify-between px-2 py-2.5 font-medium transition duration-150 hover:bg-active focus:outline-none"
+      >
+        <span className="flex items-center">
+          {icon}
+          {isOpen && <span className="text-sm ml-3">{title}</span>}
+        </span>
+        {isOpen && (isOpenState ? <IoIosArrowDown size={MAIN_ICON_SIZE} /> : <IoIosArrowForward size={MAIN_ICON_SIZE} />)}
+      </button>
+      {isOpen && isOpenState && (
+        <div className="ml-8 text-sm">
+          {subLinks.map((subLink, index) => (
+            <Link
+              key={index}
+              to={subLink.to}
+              className={`block px-2 py-1 transition duration-150 hover:bg-active mb-1 ${
+                location.pathname === subLink.to ? 'bg-active' : ''
+              }`}
+            >
+              {subLink.label}
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div className="w-72 bg-[#F6F6F6] text-black h-screen drop-shadow-lg flex flex-col justify-between">
-      {/* Main Content */}
-      <div className="main">
-        <div className="p-4 flex items-center justify-between">
-          <div className="flex items-center justify-between">
-            <span className="mr-3 cursor-pointer">
-              <GiHamburgerMenu size={24} />
-            </span>
-            <div className="w-7 h-7 mr-3">
-              {/* logo space */}
-              <span className="w-full h-full bg-gray-300 block"></span>
-            </div>
-            <h1 className="text-2xl font-medium">Gyaandweep</h1>
-            {/* bottom line */}
-          </div>
+    <div
+      className={`flex ${isOpen ? 'w-64' : 'w-20'} flex-col justify-between text-black border-r transition-all duration-300 relative`}
+    >
+      <div className="w-[85%] mx-auto flex flex-col h-full">
+        {/* Main Content */}
+        <div className="main flex-grow">
+          {/* Navigation Links */}
+          <nav className={`text-md flex flex-col ${isOpen ? '' : 'items-center'}`}>
+            {renderNavLinks('Main', [
+              { to: '/', icon: <AiOutlineHome size={MAIN_ICON_SIZE} />, label: 'Home' },
+              { to: '/schedule', icon: <AiOutlineCalendar size={MAIN_ICON_SIZE} />, label: 'Schedules' },
+            ])}
+
+            {renderNavLinks('Resource', [])}
+
+            {renderCollapsibleSection(
+              'Teaching Resources',
+              <GoBook size={MAIN_ICON_SIZE} />,
+              showTeachingResources,
+              () => setShowTeachingResources(!showTeachingResources),
+              [
+                { to: '/learning-paths', label: 'Learning Path' },
+                { to: '/modules', label: 'Modules' },
+                { to: '/sadhana', label: 'Sadhana' },
+                { to: '/digital-assets', label: 'Digital Assets' },
+              ]
+            )}
+
+            {renderCollapsibleSection(
+              'Assessment Tools',
+              <LuUsers size={MAIN_ICON_SIZE} />,
+              showAssessmentTools,
+              () => setShowAssessmentTools(!showAssessmentTools),
+              [
+                { to: '/assignments', label: 'Assignments' },
+                { to: '/questions', label: 'Questions' },
+                { to: '/tests', label: 'Tests' },
+              ]
+            )}
+
+            {renderNavLinks('Settings', [
+              { to: '/settings', icon: <BsGear size={MAIN_ICON_SIZE} />, label: 'Settings' },
+            ])}
+          </nav>
         </div>
-        <div className="w-[90%] h-[1px] bg-gray-400 mt-2 mx-auto drop-shadow-sm"></div>
-        <nav className="mt-4 text-md flex flex-col gap-2">
-          <Link
-            to="/"
-            className="flex items-center py-2.5 px-4 hover:bg-gray-200 transition duration-150 font-medium"
-          >
-            <AiOutlineHome size={mainIconSize} />{' '}
-            <span className="ml-3">Home</span>
-          </Link>
-          <Link
-            to="/schedule"
-            className="flex items-center py-2.5 px-4 hover:bg-gray-200 transition duration-150 font-medium"
-          >
-            <AiOutlineCalendar size={mainIconSize} />{' '}
-            <span className="ml-3">Schedule</span>
-          </Link>
-          <div>
-            <button
-              onClick={() => setShowTeachingResources(!showTeachingResources)}
-              className="flex items-center justify-between w-full py-2.5 px-4 hover:bg-gray-200 transition duration-150 focus:outline-none font-medium"
-            >
-              <span className="flex items-center">
-                <FiBook size={mainIconSize} />{' '}
-                <span className="ml-3">Teaching Resources</span>
-              </span>
-              {showTeachingResources ? (
-                <IoIosArrowDown size={mainIconSize} />
-              ) : (
-                <IoIosArrowForward size={mainIconSize} />
-              )}
-            </button>
-            {showTeachingResources && (
-              <div className="ml-8 text-sm">
-                <Link
-                  to="/learning-paths"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Learning Paths
-                </Link>
-                <Link
-                  to="/modules"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Modules
-                </Link>
-                <Link
-                  to="/sadhana"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Sadhana
-                </Link>
-                <Link
-                  to="/digital-assets"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Digital Assets
-                </Link>
-              </div>
-            )}
-          </div>
-          <div>
-            <button
-              onClick={() => setShowAssessmentTools(!showAssessmentTools)}
-              className="flex items-center justify-between w-full py-2.5 px-4 hover:bg-gray-200 transition duration-150 focus:outline-none font-medium"
-            >
-              <span className="flex items-center">
-                <LuUsers size={mainIconSize} />{' '}
-                <span className="ml-3">Assessment Tools</span>
-              </span>
-              {showAssessmentTools ? (
-                <IoIosArrowDown size={mainIconSize} />
-              ) : (
-                <IoIosArrowForward size={mainIconSize} />
-              )}
-            </button>
-            {showAssessmentTools && (
-              <div className="ml-8 text-sm">
-                <Link
-                  to="/assignments"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Assignments
-                </Link>
-                <Link
-                  to="/questions"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Questions
-                </Link>
-                <Link
-                  to="/tests"
-                  className="block py-1 px-4 hover:bg-gray-200 transition duration-150"
-                >
-                  Tests
-                </Link>
-              </div>
-            )}
-          </div>
-          <Link
-            to="/settings"
-            className="flex items-center py-2.5 px-4 hover:bg-gray-200 transition duration-150 font-medium"
-          >
-            <BsGear size={mainIconSize} />{' '}
-            <span className="ml-3">Settings</span>
-          </Link>
-        </nav>
+
+        {/* Bottom Content */}
+        <div className="bottom mb-2">
+          <nav className={`flex flex-col text-sm font-medium ${isOpen ? '' : 'items-center'}`}>
+            <Link to="/help" className="flex items-center px-2 py-2.5 transition duration-150 hover:bg-active">
+              <BsQuestionCircle size={SMALL_ICON_SIZE} />
+              {isOpen && <span className="ml-3">Help</span>}
+            </Link>
+            <div className="flex items-center px-2 py-2.5 transition duration-150 text-red-600 hover:bg-active" onClick={logout}>
+              <LuLogOut size={SMALL_ICON_SIZE} />
+              {isOpen && <span className="ml-3">Logout Account</span>}
+            </div>
+          </nav>
+        </div>
       </div>
 
-      {/* Bottom Content */}
-      <div className="bottom">
-        <nav className="font-medium flex-col text-sm ">
-          <Link
-            to="/help"
-            className="flex items-center py-2.5 px-4 hover:bg-gray-200 transition duration-150"
-          >
-            <BsQuestionCircle size={mIconSize} />{' '}
-            <span className="ml-3">Help</span>
-          </Link>
-          <Link
-            to="/logout"
-            className="flex items-center py-2.5 px-4 hover:bg-gray-200 transition duration-150"
-          >
-            <BsBoxArrowRight size={mIconSize} />{' '}
-            <span className="ml-3">Log out</span>
-          </Link>
-        </nav>
+      {/* Sidebar Toggle Button */}
+      <div
+        onClick={toggleSidebar}
+        className="absolute top-4 right-0 transform translate-x-[70%] p-1 bg-white border-gray-300 rounded-full shadow cursor-pointer hover:bg-active"
+      >
+        <IoIosArrowBack size={20} className={`${isOpen ? '' : 'rotate-180'}`} />
       </div>
     </div>
   );

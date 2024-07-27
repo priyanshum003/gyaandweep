@@ -5,10 +5,10 @@ const Dashboard: FC = () => {
     <div className="p-4">
       <h1 className="text-2xl font-bold">Dashboard</h1>
       <div className="mt-8">
-        <button className="bg-brown-500 text-white py-2 px-4 rounded mr-4">
+        <button className="bg-brown-500 mr-4 rounded px-4 py-2 text-white">
           Create a Gurukul
         </button>
-        <button className="bg-beige-500 text-black py-2 px-4 rounded">
+        <button className="bg-beige-500 rounded px-4 py-2 text-black">
           Join a Gurukul
         </button>
       </div>
