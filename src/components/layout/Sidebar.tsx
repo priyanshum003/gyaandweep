@@ -30,7 +30,7 @@ const Sidebar: FC = () => {
 
   // Render navigation links
   const renderNavLinks = (title: string, links: { to: string; icon: JSX.Element; label: string }[]) => (
-    <div className={`flex my-2 flex-col ${isOpen ? '' : 'items-center'}`}>
+    <div className={`flex flex-col ${isOpen ? '' : 'items-center'}`}>
       <div className="px-2 py-2 text-gray-500 text-xs">{title}</div>
       {links.map((link, index) => (
         <Link
@@ -138,7 +138,7 @@ const Sidebar: FC = () => {
               <BsQuestionCircle size={SMALL_ICON_SIZE} />
               {isOpen && <span className="ml-3">Help</span>}
             </Link>
-            <div className="flex items-center px-2 py-2.5 transition duration-150 text-red-600 hover:bg-active" onClick={logout}>
+            <div className="flex items-center px-2 py-2.5 transition duration-150 text-red-600 hover:bg-active cursor-pointer" onClick={logout}>
               <LuLogOut size={SMALL_ICON_SIZE} />
               {isOpen && <span className="ml-3">Logout Account</span>}
             </div>
